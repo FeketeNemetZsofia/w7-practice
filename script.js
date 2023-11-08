@@ -7,7 +7,7 @@ const fetchUrl = async (url) => {
 
 const personComponent = (person) => `
   <div class="person">
-    <h2>${person.name}</h2>
+    <h2>name: ${person.name}</h2>
     <h3>height: ${person.height} cm</h3>
   </div>
 `
@@ -24,8 +24,28 @@ const buttonEventComponent = (id, url, rootElement) => {
   })
 }
 
+const inputComponent = () => `
+  <div class="search">
+    <input type="text" id="name">
+    <button id="search">search!</button>
+  </div>
+`
+
+const inputEventComponent = () => {
+  const buttonElement = document.querySelector("#search")
+  buttonElement.addEventListener("click", async () => {
+    const inputElement = document.querySelector("#name")
+    const searchTag = inputElement.value
+    rootElement.innerHTML = "LOADING..."
+    
+    const newData = await fetchUrl(`https://swapi.dev/api/people/?search=${searchTag}`)
+    makeDomFromData(newData, rootElement)
+  })
+}
+
 const makeDomFromData = (data, rootElement) => {
-  rootElement.innerHTML = ""
+  rootElement.innerHTML = inputComponent()
+  inputEventComponent()
 
   data.results.forEach((person) => {
     rootElement.insertAdjacentHTML("beforeend", personComponent(person))
@@ -43,6 +63,7 @@ const makeDomFromData = (data, rootElement) => {
 }
 
 const init = async () => {
+  rootElement.innerHTML = "LOADING..."
   const data = await fetchUrl("https://swapi.dev/api/people/")
   makeDomFromData(data, rootElement)
 }
